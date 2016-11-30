@@ -8,12 +8,14 @@ import org.bson.conversions.Bson;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
 
 public class MongoDBConnector {
 	private MongoClient mongoClient;
@@ -51,6 +53,9 @@ public class MongoDBConnector {
 			MongoClientOptions options = builder.build();
 			mongoClient = new MongoClient(addr, options);
 			mongoDatabase = mongoClient.getDatabase(dbName);
+			// XXX 获取数据库名判断连接是否正常
+			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
+			databaseName.iterator();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,6 +90,38 @@ public class MongoDBConnector {
 			MongoClientOptions options = builder.build();
 			mongoClient = new MongoClient(address, credentials, options);
 			mongoDatabase = mongoClient.getDatabase(dbName);
+			// XXX 获取数据库名判断连接是否正常
+			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
+			databaseName.iterator();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * 用户名密码连接数据库
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param dbName
+	 * @param userName
+	 * @param password
+	 * @return
+	 */
+	public boolean connectWithAuthentiationByURL(String ip, int port, String dbName, String userName, String password) {
+		try {
+			ServerAddress serverAddress = new ServerAddress(ip, port);
+			List<ServerAddress> address = new ArrayList<ServerAddress>();
+			address.add(serverAddress);
+			String uri = String.format("mongodb://%s:%s@%s:%d/%s", userName, password, ip, port, dbName);
+			MongoClientURI mongoClientURI = new MongoClientURI(uri);
+			mongoClient = new MongoClient(mongoClientURI);
+			mongoDatabase = mongoClient.getDatabase(dbName);
+			// XXX 获取数据库名判断连接是否正常
+			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
+			databaseName.iterator();
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
