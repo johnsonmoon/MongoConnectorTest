@@ -15,7 +15,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoIterable;
 
 public class MongoDBConnector {
 	private MongoClient mongoClient;
@@ -54,8 +53,8 @@ public class MongoDBConnector {
 			mongoClient = new MongoClient(addr, options);
 			mongoDatabase = mongoClient.getDatabase(dbName);
 			// XXX 获取数据库名判断连接是否正常
-			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
-			databaseName.iterator();
+			if (mongoClient.getDatabase(dbName) == null)
+				return false;
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,8 +90,8 @@ public class MongoDBConnector {
 			mongoClient = new MongoClient(address, credentials, options);
 			mongoDatabase = mongoClient.getDatabase(dbName);
 			// XXX 获取数据库名判断连接是否正常
-			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
-			databaseName.iterator();
+			if (mongoClient.getDatabase(dbName) == null)
+				return false;
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -120,8 +119,8 @@ public class MongoDBConnector {
 			mongoClient = new MongoClient(mongoClientURI);
 			mongoDatabase = mongoClient.getDatabase(dbName);
 			// XXX 获取数据库名判断连接是否正常
-			MongoIterable<String> databaseName = mongoClient.listDatabaseNames();
-			databaseName.iterator();
+			if (mongoClient.getDatabase(dbName) == null)
+				return false;
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

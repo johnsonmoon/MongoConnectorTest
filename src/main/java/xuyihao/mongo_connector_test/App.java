@@ -9,6 +9,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import xuyihao.mongo.connector.MongoDBConnector;
+import xuyihao.mongo.util.CommonUtils;
 
 /**
  * 
@@ -17,7 +18,27 @@ import xuyihao.mongo.connector.MongoDBConnector;
  */
 public class App {
 	public static void main(String[] args) {
-		testConvertDocumentToMap();
+		testDatabaseEncodingGetValue();
+	}
+
+	public static void testDatabaseEncodingGetValue(){
+		MongoDBConnector connector = new MongoDBConnector();
+		if (connector.connectWithAuthentiation("115.28.192.61", 27017, "WSN_Monitor", "xuyh", "system")){
+			Document document = connector.findOne("testEncoding", new Document());
+			CommonUtils.outputLine(document.toJson());
+		}
+	}
+
+	public static void testDatabaseEncoding(){
+		MongoDBConnector connector = new MongoDBConnector();
+		if (connector.connectWithAuthentiation("115.28.192.61", 27017, "WSN_Monitor", "xuyh", "system")){
+			Map<String, Object> valueMap = new HashMap<>();
+			valueMap.put("name", "中文名");
+			valueMap.put("target", "压强");
+			valueMap.put("value", "5Pa");
+			Document document = new Document(valueMap);
+			connector.insrtDocument("testEncoding", document);
+		}
 	}
 
 	public static void testConvertDocumentToMap() {
